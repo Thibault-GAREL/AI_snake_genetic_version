@@ -17,6 +17,7 @@ This project features an AI that learns to play Snake autonomously using the NEA
 
   🏆 Tracks best fitness, average scores, and generation progress
 
+Here is an image of what it looks like :
 ![Image_snake](Images/Img_snake.png)
 
 # 📦 Dependencies
@@ -25,7 +26,7 @@ This project features an AI that learns to play Snake autonomously using the NEA
   pygame for visualization 🎮
 
 # 📝 Notes
-⏳ Training takes time – early generations play poorly but evolve quickly. I train it approximately 15h. Here is the best neural network :
+⏳ Training takes time – early generations play poorly but evolve quickly. I train it approximately 15h and the best score is 13 apples. Here is the best neural network :
 
 ![NN_snake](Images/network_graph.png)
 
