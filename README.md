@@ -25,9 +25,9 @@ Here is an image of what it looks like :
 
 
 # 📦 Dependencies
-  Python 3.x 🐍
-  neat-python
-  pygame for visualization 🎮
+  - Python 3.x 🐍
+  - neat-python
+  - pygame for visualization 🎮
 
 
 # 📝 Notes
