@@ -2,7 +2,6 @@ from openpyxl import Workbook, load_workbook
 from openpyxl.chart import LineChart, Reference
 from pathlib import Path
 
-# Arrêt à 677 cases
 
 def create(nom_fichier, titre_feuille, nom_en_tete1, nom_en_tete2):
     fichier = nom_fichier + ".xlsx" # "donnees.xlsx"

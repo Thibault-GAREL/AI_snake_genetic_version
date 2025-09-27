@@ -11,7 +11,6 @@ def compter_executions():
     else:
         compteur = 0
 
-    # Incrémenter et sauvegarder
     compteur += 1
     with open(fichier_compteur, 'w') as f:
         f.write(str(compteur))

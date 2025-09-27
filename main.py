@@ -2,7 +2,6 @@ import ia
 
 import compteur
 
-# Au début de ton programme
 executions = compteur.compter_executions()
 print(f"Exécution n°{executions}")
 
