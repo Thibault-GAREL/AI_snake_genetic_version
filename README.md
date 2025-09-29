@@ -14,7 +14,7 @@ This project features an AI that learns to play [My Snake game](https://github.c
 
 ---
 
-## ⚙️ Features
+## 🚀 Features
   🔄 No supervised learning – only evolution by fitness
 
   🧠 Networks evolve topologies and weights
@@ -33,7 +33,7 @@ Here is an image of what it looks like :
 
 ## ⚙️ How it works
 
-  🕹️ The AI controls a snake in a classic grid-based [ Snake game](https://github.com/Thibault-GAREL/snake_game).
+  🕹️ The AI controls a snake in my classic grid-based [Snake game](https://github.com/Thibault-GAREL/snake_game).
 
   🧬 It evolves over time using NEAT: networks mutate, reproduce, and get selected based on performance (fitness).
 
