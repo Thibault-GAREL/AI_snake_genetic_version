@@ -27,7 +27,9 @@ This project features an AI that learns to play [My Snake game](https://github.c
 ## Example Outputs
 Here is an image of what it looks like :
 
-![Image_snake](Images/Img_snake.png)
+<p align="center">
+  <img src="Images/Img_snake.png" alt="Image_snake">
+</p>
 
 ---
 
