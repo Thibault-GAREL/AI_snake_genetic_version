@@ -9,6 +9,10 @@
 ![License](https://img.shields.io/badge/license-MIT-green.svg)  
 ![Contributions](https://img.shields.io/badge/contributions-welcome-orange.svg)  
 
+<p align="center">
+  <img src="Images/score13.gif" alt="Gif - AI with a score of 13">
+</p>
+
 ## 📝 Project Description 
 This project features an AI that learns to play [My Snake game](https://github.com/Thibault-GAREL/snake_game) autonomously using the NEAT (NeuroEvolution of Augmenting Topologies) algorithm. No hardcoded strategies — the agent improves over generations through genetic mutations and natural selection. 🧬🤖
 
@@ -21,15 +25,7 @@ This project features an AI that learns to play [My Snake game](https://github.c
 
   📊 Real-time simulation with visualization
 
-  🏆 Tracks best fitness, average scores, and generation progress in a Excel
-
-
-## Example Outputs
-Here is an image of what it looks like :
-
-<p align="center">
-  <img src="Images/Img_snake.png" alt="Image_snake">
-</p>
+  🏆 Tracks best fitness, average scores, and generation progress in Excel
 
 ---
 
