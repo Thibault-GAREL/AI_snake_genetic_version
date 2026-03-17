@@ -49,7 +49,7 @@ This project features an AI that learns to play [My Snake game](https://github.c
 <details>
 <summary>📸 See the neural network analysis</summary>
 
-
+### For the input :
 #### Distance to walls (8 inputs)
 
 1. **distance_bord_n** — Distance to the wall to the North
@@ -72,6 +72,13 @@ This project features an AI that learns to play [My Snake game](https://github.c
 15. **distance_food_w** — Distance to the food to the West 
 16. **distance_food_n_w** — Distance to the food to the North-West
 
+### For the output:
+| # | Raw |
+|---|-----|
+| 0 | `UP` |
+| 1 | `RIGHT` |
+| 2 | `DOWN` |
+| 3 | `LEFT` |
 
 ![NN_snake](Images/network_graph-without-unuseful-connection.png)
 
