@@ -46,10 +46,36 @@ This project features an AI that learns to play [My Snake game](https://github.c
 
 🧪 You can adjust mutation rates, population size, and other parameters in the NEAT config file.
 
+<details>
+<summary>📸 See the neural network analysis</summary>
+
+
+#### Distance to walls (8 inputs)
+
+1. **distance_bord_n** — Distance to the wall to the North
+2. **distance_bord_n_e** — Distance to the wall to the North-East 
+3. **distance_bord_e** — Distance to the wall to the East 
+4. **distance_bord_s_e** — Distance to the wall to the South-East 
+5. **distance_bord_s** — Distance to the wall to the South 
+6. **distance_bord_s_w** — Distance to the wall to the South-West 
+7. **distance_bord_w** — Distance to the wall to the West 
+8. **distance_bord_n_w** — Distance to the wall to the North-West
+
+#### Distance to food (8 inputs)
+
+9. **distance_food_n —** Distance to the food to the North 
+10. **distance_food_n_e** — Distance to the food to the North-East 
+11. **distance_food_e** — Distance to the food to the East 
+12. **distance_food_s_e** — Distance to the food to the South-East 
+13. **distance_food_s** — Distance to the food to the South 
+14. **distance_food_s_w** — Distance to the food to the South-West 
+15. **distance_food_w** — Distance to the food to the West 
+16. **distance_food_n_w** — Distance to the food to the North-West
+
 
 ![NN_snake](Images/network_graph-without-unuseful-connection.png)
 
-
+</details>
 
 ---
 
