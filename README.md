@@ -46,6 +46,11 @@ This project features an AI that learns to play [My Snake game](https://github.c
 
 🧪 You can adjust mutation rates, population size, and other parameters in the NEAT config file.
 
+
+![NN_snake](Images/network_graph-without-unuseful-connection.png)
+
+
+
 ---
 
 ## 📂 Repository structure  
