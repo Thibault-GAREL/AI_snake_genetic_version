@@ -476,8 +476,8 @@ def game_loop(rect_width, rect_height, display, net, genome, i, Neat):
 
 
 
-width = 500
-height = 800 / 1 - 100
+width = 800
+height = 500 / 1 - 100
 
 rect_width = 50
 rect_height = 50
