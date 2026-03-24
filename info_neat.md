@@ -1,5 +1,15 @@
 # Snake NEAT — Informations d'entraînement
 
+## Résumé XAI — Interprétabilité du modèle
+
+L'analyse XAI du réseau NEAT révèle une stratégie émergente claire et cohérente. Les analyses SHAP et de permutation s'accordent : **les distances à la nourriture** (`Dist_food_*`) sont les features les plus influentes, en particulier dans la direction cible de chaque action, tandis que les distances aux murs jouent un rôle secondaire d'évitement. La corrélation features→actions confirme ce comportement directionnel : l'agent oriente sa décision vers la direction où la nourriture est la plus proche.
+
+Du côté des neurones cachés, un nœud est saturé en permanence (tanh ≈ 1, 100% des steps), agissant comme un biais appris, tandis que les autres nœuds présentent une spécialisation situationnelle modérée (danger directionnel, nourriture alignée). Les heatmaps de sorties et l'analyse temporelle montrent que l'agent adopte une **politique binaire franche** : il alterne entre deux directions dominantes avec des transitions nettes à chaque collecte de nourriture, sans hésitation, mais au détriment d'une exploration plus globale de la grille.
+
+Les waterfall SHAP par situation valident la cohérence interne du modèle : face à un danger, les distances aux murs déclenchent l'évitement ; face à de la nourriture alignée, la distance dans la bonne direction domine la décision. Ce comportement simple mais efficace explique à la fois les performances atteintes (> 20 pommes) et les limites du modèle face à des configurations plus complexes.
+
+---
+
 ## Temps d'entraînement
 
 | Paramètre | Valeur | Source |
