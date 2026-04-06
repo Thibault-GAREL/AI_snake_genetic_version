@@ -41,33 +41,7 @@ This project features an AI that learns to play [My Snake game](https://github.c
 
 ---
 
-## 🆚 Comparison — 4 Snake AI approaches
-
-This project is part of a series of **4 Snake AI implementations** using different AI paradigms on the same game :
-
-| Aspect | 🧬 [NEAT](https://github.com/Thibault-GAREL/AI_snake_genetic_version) ★ | 🌳 [Decision Tree](https://github.com/Thibault-GAREL/AI_snake_decision_tree_version) | 🤖 [DQL (DQN)](https://github.com/Thibault-GAREL/AI_snake_DQN_version) | 🎯 [PPO](https://github.com/Thibault-GAREL/AI_snake_PPO_version) |
-| --- | --- | --- | --- | --- |
-| **Paradigm** | Evolutionary | Imitation Learning | Reinforcement Learning | Reinforcement Learning |
-| **Algorithm type** | Neuroevolution | Supervised (XGBoost + DAgger) | Off-policy (Q-learning) | On-policy (Actor-Critic) |
-| **Architecture** | 16 → ~28 hidden (final, evolved) → 4 | 26 → 1 600 trees (400×4) → 4 | 28 → 256 → 256 → 128 → 4 | 28 → 256 → 256 → {128→4 (π), 128→1 (V)} |
-| **Model complexity** | ~200–500 params (evolves) | ~80k–200k decision nodes | ~140k params | ~145k params |
-| **Exploration** | Genetic mutations + speciation | DAgger oracle (β : 0.8 → 0.05) | ε-greedy (1.0 → 0.01) | Entropy bonus (coef 0.05) |
-| **Memory / Buffer** | Population (100 genomes) | Supervised buffer (300 000) | Experience Replay (100 000) | Rollout buffer (2 048 steps) |
-| **Batch** | — (full population eval.) | Full dataset per round | 128 | 64 |
-| **Training time** | **~15 h** | **~12 min (GPU)** | **~2.5 h (GPU)** | **~3 h (GPU)** |
-| **Max score** | **> 20** | **43** | **45** | **64** |
-| **Mean score** | **10** | **22.77** | **22.60** | **38.67** |
-| **GPU support** | ❌ | ✅ | ✅ | ✅ |
-| **Sample efficiency** | 🔴 Low | 🟢 High | 🟡 Medium | 🔴 Low |
-| **Generalization** | 🟡 Medium | 🔴 Low | 🟡 Medium | 🟢 High |
-| **Intrinsic interpretability** | 🟡 Low | 🟡 Medium (ensemble = grey box) | 🔴 Black box | 🔴 Black box |
-
-> ★ = current repository
-> Each project includes an XAI suite of 4 analysis scripts.
-
----
-
-## 🗺️ Schema
+## 🗺️ Network Architecture
 ⏳ Training takes time – early generations play poorly but evolve quickly. I train it approximately 15h and the best score is more than 20 apples. It can also **adapt** to different area. Here is the best neural network :
 
 ![NN_snake](Images/network_graph.png)
@@ -114,6 +88,62 @@ This project is part of a series of **4 Snake AI implementations** using differe
 
 ---
 
+## ⚙️ Key Hyperparameters
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `pop_size` | 100 | Population size (genomes per generation) |
+| `fitness_threshold` | 30 | Target fitness score to stop training |
+| `num_inputs` | 16 | Network inputs (8 wall + 8 food distances) |
+| `num_hidden` | 8 | Initial hidden nodes (topology evolves via mutations) |
+| `num_outputs` | 4 | Network outputs (UP, RIGHT, DOWN, LEFT) |
+| `conn_add_prob` | 0.5 | Probability to add a connection per mutation |
+| `node_add_prob` | 0.2 | Probability to add a node per mutation |
+| `weight_mutate_rate` | 0.8 | Probability to mutate a connection weight |
+| `survival_threshold` | 0.2 | Top 20% of species members survive to reproduce |
+| `compatibility_threshold` | 3.0 | Speciation distance threshold |
+
+---
+
+## 🆚 Comparison — 4 Snake AI approaches
+
+This project is part of a series of **4 Snake AI implementations** using different AI paradigms on the same game :
+
+| Aspect | 🧬 [NEAT](https://github.com/Thibault-GAREL/AI_snake_genetic_version) ★ | 🌳 [Decision Tree](https://github.com/Thibault-GAREL/AI_snake_decision_tree_version) | 🤖 [DQL (DQN)](https://github.com/Thibault-GAREL/AI_snake_DQN_version) | 🎯 [PPO](https://github.com/Thibault-GAREL/AI_snake_PPO_version) |
+| --- | --- | --- | --- | --- |
+| **Paradigm** | Evolutionary | Imitation Learning | Reinforcement Learning | Reinforcement Learning |
+| **Algorithm type** | Neuroevolution | Supervised (XGBoost + DAgger) | Off-policy (Q-learning) | On-policy (Actor-Critic) |
+| **Architecture** | 16 → ~28 hidden (final, evolved) → 4 | 26 → 1 600 trees (400×4) → 4 | 28 → 256 → 256 → 128 → 4 | 28 → 256 → 256 → {128→4 (π), 128→1 (V)} |
+| **Model complexity** | ~200–500 params (evolves) | ~80k–200k decision nodes | ~140k params | ~145k params |
+| **Exploration** | Genetic mutations + speciation | DAgger oracle (β : 0.8 → 0.05) | ε-greedy (1.0 → 0.01) | Entropy bonus (coef 0.05) |
+| **Memory / Buffer** | Population (100 genomes) | Supervised buffer (300 000) | Experience Replay (100 000) | Rollout buffer (2 048 steps) |
+| **Batch** | — (full population eval.) | Full dataset per round | 128 | 64 |
+| **Training time** | **~15 h** | **~12 min (GPU)** | **~2.5 h (GPU)** | **~3 h (GPU)** |
+| **Max score** | **> 20** | **43** | **45** | **64** |
+| **Mean score** | **10** | **22.77** | **22.60** | **38.67** |
+| **GPU support** | ❌ | ✅ | ✅ | ✅ |
+| **Sample efficiency** | 🔴 Low | 🟢 High | 🟡 Medium | 🔴 Low |
+| **Generalization** | 🟡 Medium | 🔴 Low | 🟡 Medium | 🟢 High |
+| **Intrinsic interpretability** | 🟡 Low | 🟡 Medium (ensemble = grey box) | 🔴 Black box | 🔴 Black box |
+
+> ★ = current repository
+> Each project includes an XAI suite of 4 analysis scripts.
+
+---
+
+## 🔬 XAI Suite
+
+Four dedicated scripts analyze the evolved NEAT network :
+
+| Script | Analysis | Output |
+|--------|----------|--------|
+| `xai_neat_outputs.py` | Output probability heatmaps, confidence map, temporal evolution | `xai_neat_outputs/` |
+| `xai_neat_features.py` | Feature importance, weight analysis, feature-action correlation | `xai_neat_features/` |
+| `xai_neat_activations.py` | Node activations, specialization per game situation | `xai_neat_activations/` |
+| `xai_neat_shap.py` | SHAP analysis — beeswarm, waterfall, force plots | `xai_neat_shap/` |
+
+---
+
 ## 📂 Repository structure
 ```bash
 ├── Images/                 # Images for the README
@@ -129,9 +159,15 @@ This project is part of a series of **4 Snake AI implementations** using differe
 ├── exw.py                  # Excel writer script
 ├── ia.py                   # Main AI logic
 ├── main.py                 # Project entry point
+├── snake.py                # Snake game implementation
+│
+├── xai_neat_outputs.py     # XAI — Output heatmaps & temporal analysis
+├── xai_neat_features.py    # XAI — Feature importance
+├── xai_neat_activations.py # XAI — Node activations
+├── xai_neat_shap.py        # XAI — SHAP explanations
+│
 ├── network_graph/          # Network graph visualization
 │   └── network_graph.png
-├── snake.py                # Snake game implementation
 │
 ├── LICENSE                 # Project license
 ├── README.md               # Main documentation
@@ -142,8 +178,8 @@ This project is part of a series of **4 Snake AI implementations** using differe
 ## 💻 Run it on Your PC
 Clone the repository and install dependencies:
 ```bash
-git clone https://github.com/Thibault-GAREL/snake_game.git
-cd snake_game
+git clone https://github.com/Thibault-GAREL/AI_snake_genetic_version.git
+cd AI_snake_genetic_version
 
 python -m venv .venv #if you don't have a virtual environnement
 source .venv/bin/activate   # Linux / macOS
