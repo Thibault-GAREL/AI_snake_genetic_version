@@ -82,9 +82,21 @@ This project features an AI that learns to play [My Snake game](https://github.c
 | 2 | `DOWN` |
 | 3 | `LEFT` |
 
-![NN_snake](Images/network_graph-without-unuseful-connection.png)
+<!-- ![NN_snake](Images/network_graph-without-unuseful-connection.png) -->
 
 </details>
+
+---
+
+## 🔍 Manual Interpretability
+
+The network below shows only the connections that actually matter after removing unused ones:
+
+![Network without useless connections](Images/network_graph-without-unuseful-connection.png)
+
+From this simplified view, the following strategy can be extracted manually:
+
+![Manually extracted strategy](Images/Stratégie-extraite-manuellement.png)
 
 ---
 
