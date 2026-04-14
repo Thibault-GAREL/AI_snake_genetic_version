@@ -18,14 +18,17 @@ This project features an AI that learns to play [My Snake game](https://github.c
 
 ---
 
+## 🎯 Context & Motivation
+
+Neural networks make decisions without being able to explain them — the **black box problem**. This project explores **Explainable AI (XAI)**: extracting interpretable strategies from a trained agent, using Snake as a simple, visual testbed. NEAT's compact topology makes it uniquely suited for this: small enough to inspect manually, yet powerful enough to develop a real strategy.
+
+---
+
 ## 🚀 Features
-  🔄 No supervised learning – only evolution by fitness
 
   🧠 Networks evolve topologies and weights
 
   📊 Real-time simulation with visualization
-
-  🏆 Tracks best fitness, average scores, and generation progress in Excel
 
 ---
 
@@ -83,6 +86,22 @@ This project features an AI that learns to play [My Snake game](https://github.c
 | 3 | `LEFT` |
 
 <!-- ![NN_snake](Images/network_graph-without-unuseful-connection.png) -->
+
+</details>
+
+---
+
+<details>
+<summary>🟩 Interpretability spectrum — white / grey / black box</summary>
+
+| Box type | Definition | Example here |
+| --- | --- | --- |
+| ⬜ White box | Fully readable logic | Q-table (policy readable by construction) |
+| 🔲 Grey box | Transparent structure, unreadable complexity | XGBoost (80k–200k decision nodes) |
+| ⬛ Black box | Opaque internals | DQL, PPO |
+| 🟩 NEAT | Small enough for manual inspection + XAI | **This repo** |
+
+NEAT sits in a unique position: its evolved topology stays compact enough to be read directly, making it the ideal entry point before applying automated XAI tools.
 
 </details>
 
@@ -163,6 +182,31 @@ Four dedicated scripts analyze the evolved NEAT network :
 
 ---
 
+## 📊 XAI Results — NEAT
+
+> Key findings from the 4 XAI scripts applied to the best evolved network.
+
+**Feature importance** (permutation importance + SHAP agree):
+
+- Top features: `food_N` > `food_NE` > `wall_S` > `wall_SW`
+- Food distances matter **more** than wall distances overall
+
+**Hidden layer insight:**
+
+- One hidden node stays saturated at tanh ≈ +1 across **100% of steps** — it behaves as a learned bias, not a situational sensor
+
+**Learned policy:**
+
+- Binary and circular: the agent switches between 2 dominant directions per food collect
+- Explains ~10 apples average — consistent but limited
+
+**Limits of NEAT:**
+
+- No self-collision awareness — body is not part of the strategy
+- Network too small for medium-term planning (score plateaus ~20)
+
+---
+
 ## 📂 Repository structure
 ```bash
 ├── Images/                 # Images for the README
@@ -210,7 +254,9 @@ python main.py
 ```
 ---
 
-## 📖 Inspiration / Sources
-I code it without any help 😆 !
+## 📖 Sources
 
-Code created by me 😎, Thibault GAREL - [Github](https://github.com/Thibault-GAREL)
+- **NEAT algorithm** — *Evolving Neural Networks through Augmenting Topologies*, Stanley & Miikkulainen (2002)
+- **XAI Survey** — *Explainable Artificial Intelligence: A Survey of Needs, Techniques, Applications, and Future Direction*, Mersha et al. (2024) — [arxiv.org/abs/2409.00265](https://arxiv.org/abs/2409.00265)
+
+Code created by me 😎, Thibault GAREL — [GitHub](https://github.com/Thibault-GAREL)
