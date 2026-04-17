@@ -18,17 +18,37 @@ This project features an AI that learns to play [My Snake game](https://github.c
 
 ---
 
+## 🔬 Research Question
+
+> **How do we extract complex reasoning from a neural network?**
+
+Neural networks are often described as **black boxes**: their internal decision logic remains opaque despite producing relevant results. This project goes beyond training a performant agent — it applies **Explainable AI (XAI)** techniques to understand *why* the network makes the decisions it does, and attempts a **manual extraction** of the agent's learned strategy.
+
+The NEAT algorithm is the ideal starting point: its compact topology (16 inputs → evolved hidden nodes → 4 outputs) makes it small enough to analyze by hand before applying automated XAI tools — allowing a direct comparison between manual and algorithmic interpretations.
+
+---
+
 ## 🎯 Context & Motivation
 
 Neural networks make decisions without being able to explain them — the **black box problem**. This project explores **Explainable AI (XAI)**: extracting interpretable strategies from a trained agent, using Snake as a simple, visual testbed. NEAT's compact topology makes it uniquely suited for this: small enough to inspect manually, yet powerful enough to develop a real strategy.
 
 ---
 
-## 🚀 Features
+## 🌟 Features
 
-  🧠 Networks evolve topologies and weights
+  🧬 **NEAT** evolves both topology and weights — no fixed architecture, no backpropagation
 
-  📊 Real-time simulation with visualization
+  👁️ **Live visualization** — best agent displayed in real-time during training
+
+  📈 **Excel tracking** — score and loss logged to `.xlsx` per generation
+
+  🔍 **Manual interpretability** — strategy manually extracted from the evolved network
+
+  💾 **Auto-save** — best genome checkpointed automatically
+
+  🧪 **Configurable** — mutation rates, population size, and speciation params via `config.txt`
+
+  🔬 **Full XAI suite** — 4 independent analysis scripts
 
 ---
 
@@ -180,30 +200,71 @@ Four dedicated scripts analyze the evolved NEAT network :
 | `xai_neat_activations.py` | Node activations, specialization per game situation | `xai_neat_activations/` |
 | `xai_neat_shap.py` | SHAP analysis — beeswarm, waterfall, force plots | `xai_neat_shap/` |
 
----
+<details>
+<summary>📸 Predictions analysis — xai_neat_outputs.py</summary>
 
-## 📊 XAI Results — NEAT
+Shows **what the network "thinks"** at each cell of the grid. The probability heatmaps reveal which action the model favors per position, the confidence map shows where the agent is decisive vs. uncertain, and the temporal evolution tracks how action probabilities shift step by step during a real episode.
 
-> Key findings from the 4 XAI scripts applied to the best evolved network.
+#### Probability heatmaps
+![xai_neat_heatmaps](xai_neat_outputs/xai_neat_heatmaps.png)
 
-**Feature importance** (permutation importance + SHAP agree):
+#### Confidence map & learned policy
+![xai_neat_confidence](xai_neat_outputs/xai_neat_confidence.png)
 
-- Top features: `food_N` > `food_NE` > `wall_S` > `wall_SW`
-- Food distances matter **more** than wall distances overall
+#### Temporal probability evolution
+![xai_neat_temporal](xai_neat_outputs/xai_neat_temporal.png)
 
-**Hidden layer insight:**
+</details>
 
-- One hidden node stays saturated at tanh ≈ +1 across **100% of steps** — it behaves as a learned bias, not a situational sensor
+<details>
+<summary>📸 Feature importance — xai_neat_features.py</summary>
 
-**Learned policy:**
+Answers the question: **which inputs actually drive the decisions?** Permutation importance measures the score drop when each feature is shuffled. The weight analysis exposes which inputs have the strongest structural connections. The correlation heatmap and sensory profiles show which feature tends to trigger which action.
 
-- Binary and circular: the agent switches between 2 dominant directions per food collect
-- Explains ~10 apples average — consistent but limited
+Key finding: **food distances dominate over wall distances** — `food_N` is the single most determinant feature. One hidden node stays saturated at tanh ≈ +1 across 100% of steps: it behaves as a **learned bias**, not a situational sensor.
 
-**Limits of NEAT:**
+#### Permutation importance
+![xai_neat_permutation](xai_neat_features/xai_neat_permutation.png)
 
-- No self-collision awareness — body is not part of the strategy
-- Network too small for medium-term planning (score plateaus ~20)
+#### Feature-action correlation
+![xai_neat_correlation](xai_neat_features/xai_neat_correlation.png)
+
+#### Weight analysis (structural connections)
+![xai_neat_weights](xai_neat_features/xai_neat_weights.png)
+
+#### Sensory profile per action
+![xai_neat_mean_per_action](xai_neat_features/xai_neat_mean_per_action.png)
+
+</details>
+
+<details>
+<summary>📸 Node activations — xai_neat_activations.py</summary>
+
+Looks inside the hidden layer. The distribution plot identifies active vs. dead neurons (green = active, red = dead — NEAT's parsimony keeps only the useful ones). The specialization plot reveals which nodes fire for specific game situations.
+
+#### Activation distribution (dead vs. active nodes)
+![xai_neat_distribution](xai_neat_activations/xai_neat_distribution.png)
+
+#### Node specialization by game situation
+![xai_neat_specialization](xai_neat_activations/xai_neat_specialization.png)
+
+</details>
+
+<details>
+<summary>📸 SHAP analysis — xai_neat_shap.py</summary>
+
+Uses **SHAP** to decompose every prediction into per-feature contributions. The beeswarm gives a global ranking of feature impact across all decisions. The waterfall plots break down one specific decision per game situation. The summary heatmap shows signed SHAP values per feature × action, revealing which features push the agent toward or away from each action.
+
+#### Beeswarm plot (global feature impact)
+![xai_neat_shap_beeswarm](xai_neat_shap/xai_neat_shap_beeswarm.png)
+
+#### Waterfall plots (per game situation)
+![xai_neat_shap_waterfall](xai_neat_shap/xai_neat_shap_waterfall.png)
+
+#### SHAP summary heatmap
+![xai_neat_shap_heatmap](xai_neat_shap/xai_neat_shap_heatmap.png)
+
+</details>
 
 ---
 
@@ -254,9 +315,13 @@ python main.py
 ```
 ---
 
-## 📖 Sources
+## 📖 Sources & Research Papers
 
-- **NEAT algorithm** — *Evolving Neural Networks through Augmenting Topologies*, Stanley & Miikkulainen (2002)
-- **XAI Survey** — *Explainable Artificial Intelligence: A Survey of Needs, Techniques, Applications, and Future Direction*, Mersha et al. (2024) — [arxiv.org/abs/2409.00265](https://arxiv.org/abs/2409.00265)
+- **NEAT algorithm** — [*Evolving Neural Networks through Augmenting Topologies*](http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf), Stanley & Miikkulainen (2002)
+- **XGBoost** — [*A Scalable Tree Boosting System*](https://arxiv.org/abs/1603.02754), Tianqi Chen (2016)
+- **Deep Q-Learning** — [*A Theoretical Analysis of Deep Q-Learning*](https://arxiv.org/abs/1901.00137), Zhuoran Yang (2019)
+- **PPO** — [*Proximal Policy Optimization Algorithms*](https://arxiv.org/abs/1707.06347), John Schulman (2017)
+- **XAI Survey** — [*Explainable AI: A Survey of Needs, Techniques, Applications, and Future Direction*](https://arxiv.org/abs/2409.00265), Mersha et al. (2024)
+- *L'Intelligence Artificielle pour les développeurs* — Virginie Mathivet (2014)
 
 Code created by me 😎, Thibault GAREL — [GitHub](https://github.com/Thibault-GAREL)
