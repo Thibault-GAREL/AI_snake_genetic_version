@@ -5,6 +5,7 @@
 ![Numpy](https://img.shields.io/badge/Numpy-2.2.6-red.svg)
 ![Pygame](https://img.shields.io/badge/Pygame-2.6.1-red.svg)
 ![OpenPyxl](https://img.shields.io/badge/OpenPyxl-3.1.5-red.svg)
+![SHAP](https://img.shields.io/badge/SHAP-0.49-purple.svg)
 
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Contributions](https://img.shields.io/badge/contributions-welcome-orange.svg)
@@ -14,7 +15,17 @@
 </p>
 
 ## 📝 Project Description
-This project features an AI that learns to play [My Snake game](https://github.com/Thibault-GAREL/snake_game) autonomously using the NEAT (NeuroEvolution of Augmenting Topologies) algorithm. No hardcoded strategies — the agent improves over generations through genetic mutations and natural selection. 🧬🤖
+
+This project is the **first entry** in my Snake AI series :
+
+- 🎮 The Snake game itself : [snake_game](https://github.com/Thibault-GAREL/snake_game)
+- 🌳 Second AI version using Decision Trees : [AI_snake_decision_tree_version](https://github.com/Thibault-GAREL/AI_snake_decision_tree_version)
+- 🤖 Third AI version using Deep Q-Learning : [AI_snake_DQN_version](https://github.com/Thibault-GAREL/AI_snake_DQN_version)
+- 🎯 Fourth AI version using PPO : [AI_snake_PPO_version](https://github.com/Thibault-GAREL/AI_snake_PPO_version)
+
+This project features an AI that learns to play Snake using the **NEAT (NeuroEvolution of Augmenting Topologies)** algorithm. No hardcoded strategies — the agent improves over generations through genetic mutations and natural selection. 🧬🤖 The agent receives a **state vector of 16 features** (8 wall distances + 8 food distances) and evolves both the network topology and weights simultaneously, unlike gradient-based approaches.
+
+The project also includes a full **Explainable AI (XAI)** suite to understand what the evolved network has learned, and uniquely enables **manual strategy extraction** from the network graph — something impossible with the larger models that follow in this series.
 
 ---
 
@@ -30,7 +41,28 @@ The NEAT algorithm is the ideal starting point: its compact topology (16 inputs 
 
 ## 🎯 Context & Motivation
 
-Neural networks make decisions without being able to explain them — the **black box problem**. This project explores **Explainable AI (XAI)**: extracting interpretable strategies from a trained agent, using Snake as a simple, visual testbed. NEAT's compact topology makes it uniquely suited for this: small enough to inspect manually, yet powerful enough to develop a real strategy.
+The deeper motivation behind this project series is the **alignment problem** — one of the most important open challenges in AI. It refers to the difficulty of ensuring that AI systems act in accordance with human intentions, not just formal instructions.
+
+Concrete failures: an agent tasked with "maximizing cleanliness" might throw away useful objects (emergent objectives), hide dirt under a rug (reward hacking), or block humans from entering to prevent re-dirtying. The agent does exactly what it was told — not what was intended.
+
+This gap is hard to diagnose when you can't see inside the model. One key obstacle is the **black box problem**: deep neural networks make decisions through immense parameter spaces whose internal logic is effectively unreadable to humans. **Explainable AI (XAI)** is one answer — making AI reasoning transparent and interpretable.
+
+NEAT is the ideal entry point for this series: its evolved topology stays compact enough to read directly, making it uniquely suited for comparing manual interpretability with automated XAI tools — before scaling up to the grey and black boxes that follow.
+
+---
+
+## 🩻 Interpretability Spectrum
+
+A key conceptual framework underlying the whole project series:
+
+| Box type | Definition | Example |
+| -------- | ---------- | ------- |
+| ⬜ White box | Fully readable logic — policy extractable directly | Q-table (tabular Q-learning) |
+| 🔲 Grey box | Transparent structure, unreadable complexity | XGBoost (80k–200k nodes) |
+| ⬛ Black box | Opaque internals despite good performance | DQL, PPO |
+| 🟩 NEAT | Small enough for manual inspection + XAI | **This repo** |
+
+NEAT sits in a unique position: its evolved topology stays compact enough to be read directly, making it the ideal entry point before applying automated XAI tools. The manual strategy extraction (see below) is only possible because of this compactness — and the contrast with later experiments makes the black box problem concrete and tangible.
 
 ---
 
@@ -54,18 +86,21 @@ Neural networks make decisions without being able to explain them — the **blac
 
 ## ⚙️ How it works
 
-  🕹️ The AI controls a snake in my classic grid-based [Snake game](https://github.com/Thibault-GAREL/snake_game).
+  🕹️ The AI controls a snake in a classic grid-based [Snake game](https://github.com/Thibault-GAREL/snake_game). At each step, it receives a **state vector of 16 features** (8 wall distances + 8 food distances) and outputs one of 4 actions (UP, RIGHT, DOWN, LEFT) using **tanh activations** throughout the evolved network.
 
-  🧬 It evolves over time using NEAT: networks mutate, reproduce, and get selected based on performance (fitness).
+  🧬 **Evolution** : a population of 100 genomes evolves over generations. Each genome encodes both the weights and the topology of a neural network. At each generation, the best performers survive and reproduce — passing on their successful connections and nodes, plus random mutations.
 
-  👁️ Visual interface shows the best snake live as it learns.
+  👁️ **Live visualization** shows the best-performing snake in real-time as evolution progresses. Early generations play poorly but the population improves quickly through speciation — protecting novel topologies long enough for them to develop.
 
-  📈 An Excel is here to track the score or the loss.
+  📈 **Excel tracking** logs score and loss per generation for post-training analysis.
+
+  🔍 **Manual strategy extraction** : once training converges, the evolved network is small enough to read directly. Unused connections are pruned to reveal the core decision logic — a step impossible for the larger models that follow in this series.
 
 ---
 
 ## 🗺️ Network Architecture
-⏳ Training takes time – early generations play poorly but evolve quickly. I train it approximately 15h and the best score is more than 20 apples. It can also **adapt** to different area. Here is the best neural network :
+
+⏳ Training takes time – early generations play poorly but evolve quickly. I train it approximately 15h and the best score is more than 20 apples. It can also **adapt** to different areas. Here is the best neural network :
 
 ![NN_snake](Images/network_graph.png)
 
@@ -74,54 +109,42 @@ Neural networks make decisions without being able to explain them — the **blac
 <details>
 <summary>📸 See the neural network analysis</summary>
 
-### For the input :
-#### Distance to walls (8 inputs)
+### Input features — 16 inputs
 
-1. **distance_bord_n** — Distance to the wall to the North
-2. **distance_bord_n_e** — Distance to the wall to the North-East
-3. **distance_bord_e** — Distance to the wall to the East
-4. **distance_bord_s_e** — Distance to the wall to the South-East
-5. **distance_bord_s** — Distance to the wall to the South
-6. **distance_bord_s_w** — Distance to the wall to the South-West
-7. **distance_bord_w** — Distance to the wall to the West
-8. **distance_bord_n_w** — Distance to the wall to the North-West
+#### Distance to walls / body (8 inputs)
+
+| # | Feature |
+|---|---------|
+| 0 | `distance_bord_N` — Distance to obstacle North |
+| 1 | `distance_bord_NE` — Distance to obstacle North-East |
+| 2 | `distance_bord_E` — Distance to obstacle East |
+| 3 | `distance_bord_SE` — Distance to obstacle South-East |
+| 4 | `distance_bord_S` — Distance to obstacle South |
+| 5 | `distance_bord_SW` — Distance to obstacle South-West |
+| 6 | `distance_bord_W` — Distance to obstacle West |
+| 7 | `distance_bord_NW` — Distance to obstacle North-West |
 
 #### Distance to food (8 inputs)
 
-9. **distance_food_n —** Distance to the food to the North
-10. **distance_food_n_e** — Distance to the food to the North-East
-11. **distance_food_e** — Distance to the food to the East
-12. **distance_food_s_e** — Distance to the food to the South-East
-13. **distance_food_s** — Distance to the food to the South
-14. **distance_food_s_w** — Distance to the food to the South-West
-15. **distance_food_w** — Distance to the food to the West
-16. **distance_food_n_w** — Distance to the food to the North-West
+| # | Feature |
+|---|---------|
+| 8  | `distance_food_N` — Distance to food North |
+| 9  | `distance_food_NE` — Distance to food North-East |
+| 10 | `distance_food_E` — Distance to food East |
+| 11 | `distance_food_SE` — Distance to food South-East |
+| 12 | `distance_food_S` — Distance to food South |
+| 13 | `distance_food_SW` — Distance to food South-West |
+| 14 | `distance_food_W` — Distance to food West |
+| 15 | `distance_food_NW` — Distance to food North-West |
 
-### For the output:
-| # | Raw |
-|---|-----|
+### Output — 4 actions
+
+| # | Action |
+|---|--------|
 | 0 | `UP` |
 | 1 | `RIGHT` |
 | 2 | `DOWN` |
 | 3 | `LEFT` |
-
-<!-- ![NN_snake](Images/network_graph-without-unuseful-connection.png) -->
-
-</details>
-
----
-
-<details>
-<summary>🟩 Interpretability spectrum — white / grey / black box</summary>
-
-| Box type | Definition | Example here |
-| --- | --- | --- |
-| ⬜ White box | Fully readable logic | Q-table (policy readable by construction) |
-| 🔲 Grey box | Transparent structure, unreadable complexity | XGBoost (80k–200k decision nodes) |
-| ⬛ Black box | Opaque internals | DQL, PPO |
-| 🟩 NEAT | Small enough for manual inspection + XAI | **This repo** |
-
-NEAT sits in a unique position: its evolved topology stays compact enough to be read directly, making it the ideal entry point before applying automated XAI tools.
 
 </details>
 
@@ -189,7 +212,7 @@ This project is part of a series of **4 Snake AI implementations** using differe
 
 ---
 
-## 🔬 XAI Suite
+## 🔬 Explainable AI (XAI) Suite
 
 Four dedicated scripts analyze the evolved NEAT network :
 
@@ -200,10 +223,18 @@ Four dedicated scripts analyze the evolved NEAT network :
 | `xai_neat_activations.py` | Node activations, specialization per game situation | `xai_neat_activations/` |
 | `xai_neat_shap.py` | SHAP analysis — beeswarm, waterfall, force plots | `xai_neat_shap/` |
 
+**Key findings from XAI analysis (baseline score: 10 apples) :**
+
+- 🎯 **`food_N` is the single most determinant feature** — its removal causes the largest score drop, confirming the agent's food-chasing strategy is built almost entirely around northward food detection
+- 🔮 **One hidden node behaves as a learned bias** — it stays saturated at tanh ≈ +1 across 100% of steps, contributing a constant offset to every decision rather than reacting to game state
+- 🔄 **The strategy is circular and fixed** — the agent develops a stable rotation pattern triggered by food position, that works well in open space but fails when the body blocks the path
+- 🧠 **Food distances dominate over wall distances** — wall inputs are largely ignored: the snake navigates by food attraction alone, without modeling its own body as an obstacle
+- 🟩 **NEAT is the most interpretable model in the series** — its compact topology allows direct manual reading of the strategy, before XAI tools even become necessary
+
 <details>
 <summary>📸 Predictions analysis — xai_neat_outputs.py</summary>
 
-Shows **what the network "thinks"** at each cell of the grid. The probability heatmaps reveal which action the model favors per position, the confidence map shows where the agent is decisive vs. uncertain, and the temporal evolution tracks how action probabilities shift step by step during a real episode.
+Shows **what the network "thinks"** at each cell of the grid. The probability heatmaps reveal which action the model favors per position, the confidence map shows where the agent is decisive vs. uncertain, and the temporal evolution tracks how action probabilities shift step by step during a real episode — including the moment of death.
 
 #### Probability heatmaps
 ![xai_neat_heatmaps](xai_neat_outputs/xai_neat_heatmaps.png)
@@ -268,6 +299,48 @@ Uses **SHAP** to decompose every prediction into per-feature contributions. The 
 
 ---
 
+## 💡 Key Insights
+
+**NEAT is the only model in the series readable by hand**
+The compact topology — 16 inputs, a handful of evolved hidden nodes, 4 outputs — stays small enough to draw on paper and read directly. The manual strategy extraction confirms what XAI tools later confirm algorithmically: the agent learned a food-attraction circuit with a near-constant bias node. This is the only experiment in the series where manual and algorithmic interpretability produce the same conclusion independently.
+
+**Food-only navigation — no body awareness**
+NEAT's 16 inputs encode wall distances and food distances only. There is no information about the snake's own body, no danger binary, no directional encoding. The XAI analysis confirms the agent navigates almost exclusively by food proximity — `food_N` is the dominant feature by a large margin. Wall distances are largely irrelevant: the agent avoids walls as a side effect of staying near food, not by modeling danger directly.
+
+**The learned bias node: a structural artifact with strategic consequences**
+One hidden node behaves as a constant — saturated at tanh ≈ +1 across all game states. It contributes a fixed offset to every action decision, effectively acting as a **learned prior**: a default tendency that gets overridden only when food signals are strong enough. This is the kind of low-level structural feature that XAI tools can surface but that would never appear in a verbal description of the strategy.
+
+**The circular strategy: emergent and brittle**
+The agent settled on a rotation pattern: when food is detected in a given direction, it curves toward it in a roughly circular arc. This works well in open space — the agent is rarely uncertain about what to do. But it fails catastrophically when the snake's own body lies in the rotation path, which is why mean score plateaus at ~10. The strategy is **emergent** (never programmed), **interpretable** (readable from the graph), and **brittle** (cannot generalize to self-avoidance).
+
+**XAI as a baseline for the whole series**
+The tools used here — permutation importance, weight analysis, SHAP, activation profiling — are applied to all 4 agents in this series. NEAT serves as the ground truth: because the manual and algorithmic interpretations agree, we can trust the tools when they reveal things that cannot be verified by hand in the later, larger models.
+
+### Learned strategy comparison across the 4 experiments
+
+| Agent | Strategy type | Most influential feature |
+| ----- | ------------- | ------------------------ |
+| **NEAT** | **Circular, food-chasing, fixed** | **`food_N` (food distance North)** |
+| Decision Tree | Reactive, danger-aware, adaptive | `ΔFood Y` + `Danger E/W` |
+| DQL | Size-aware, body-anticipating | `Length` + `ΔFood X/Y` |
+| PPO | Symmetric risk, end-game anticipation | `Danger binary` (all directions) |
+
+---
+
+## 🔭 Perspectives
+
+  🗺️ **Saliency Maps** — the natural next step: apply XAI to image recognition models, highlighting the exact pixels that triggered a decision (e.g., a cat's ears to classify it as a cat).
+
+  🤖 **Automated XAI** — move from human-driven data science analysis to an AI that automatically analyzes any model and produces a readable strategy summary. Current tools are fast but shallow; an intelligent XAI system could reveal complex multi-feature interactions that no human would manually uncover.
+
+  🏛️ **Neural network analysis database** — build a dataset of diverse trained agents, then train an AI to generalize: input a model, output its strategy in human-readable form.
+
+  🧹 **Optimization via XAI** — the dead/bias nodes identified from activation profiles could directly guide topology pruning: fewer nodes, same behavior, lower compute cost.
+
+  📐 **Richer input encoding** — the 16-input limitation is the direct cause of NEAT's body-blindness. Adding binary danger inputs (like the Decision Tree's 26-feature state) would give the agent the information it needs to develop a self-avoidance strategy, and could change the emerged behavior entirely.
+
+---
+
 ## 📂 Repository structure
 ```bash
 ├── Images/                 # Images for the README
@@ -290,9 +363,15 @@ Uses **SHAP** to decompose every prediction into per-feature contributions. The 
 ├── xai_neat_activations.py # XAI — Node activations
 ├── xai_neat_shap.py        # XAI — SHAP explanations
 │
+├── xai_neat_outputs/       # Output plots — Predictions
+├── xai_neat_features/      # Output plots — Feature importance
+├── xai_neat_activations/   # Output plots — Activations
+├── xai_neat_shap/          # Output plots + HTML — SHAP
+│
 ├── network_graph/          # Network graph visualization
 │   └── network_graph.png
 │
+├── Rapport MPP - Thibault GAREL - 2026-04-13.pdf   # Full analysis report
 ├── LICENSE                 # Project license
 ├── README.md               # Main documentation
 ```
@@ -305,19 +384,31 @@ Clone the repository and install dependencies:
 git clone https://github.com/Thibault-GAREL/AI_snake_genetic_version.git
 cd AI_snake_genetic_version
 
-python -m venv .venv #if you don't have a virtual environnement
+python -m venv .venv # if you don't have a virtual environment
 source .venv/bin/activate   # Linux / macOS
 .venv\Scripts\activate      # Windows
 
 pip install neat-python numpy pygame openpyxl
+pip install shap            # for xai_neat_shap.py
 
 python main.py
 ```
+
+### Run XAI analyses
+
+```bash
+python xai_neat_outputs.py              # all prediction plots
+python xai_neat_features.py             # all feature importance plots
+python xai_neat_activations.py          # node activations
+python xai_neat_shap.py                 # all SHAP plots
+python xai_neat_shap.py --beeswarm      # SHAP beeswarm only
+```
+
 ---
 
 ## 📄 Full Report
 
-A detailed report accompanies this project, covering the full analysis : NEAT training methodology, manual interpretability, XAI results, and comparison across the 4 Snake AI approaches.
+A detailed report accompanies this project series, covering the full analysis : NEAT training methodology, manual interpretability, XAI results, and comparison across the 4 Snake AI approaches (NEAT, Decision Tree, DQL, PPO).
 
 📥 [Download the report (PDF)](Rapport%20MPP%20-%20Thibault%20GAREL%20-%202026-04-13.pdf)
 
@@ -327,6 +418,7 @@ A detailed report accompanies this project, covering the full analysis : NEAT tr
 
 - **NEAT algorithm** — [*Evolving Neural Networks through Augmenting Topologies*](http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf), Stanley & Miikkulainen (2002)
 - **XGBoost** — [*A Scalable Tree Boosting System*](https://arxiv.org/abs/1603.02754), Tianqi Chen (2016)
+- **DAgger** — [*A Reduction of Imitation Learning and Structured Prediction to No-Regret Online Learning*](https://arxiv.org/abs/1011.0686), Ross et al. (2011)
 - **Deep Q-Learning** — [*A Theoretical Analysis of Deep Q-Learning*](https://arxiv.org/abs/1901.00137), Zhuoran Yang (2019)
 - **PPO** — [*Proximal Policy Optimization Algorithms*](https://arxiv.org/abs/1707.06347), John Schulman (2017)
 - **XAI Survey** — [*Explainable AI: A Survey of Needs, Techniques, Applications, and Future Direction*](https://arxiv.org/abs/2409.00265), Mersha et al. (2024)
