@@ -315,6 +315,14 @@ python main.py
 ```
 ---
 
+## 📄 Full Report
+
+A detailed report accompanies this project, covering the full analysis : NEAT training methodology, manual interpretability, XAI results, and comparison across the 4 Snake AI approaches.
+
+📥 [Download the report (PDF)](Rapport%20MPP%20-%20Thibault%20GAREL%20-%202026-04-13.pdf)
+
+---
+
 ## 📖 Sources & Research Papers
 
 - **NEAT algorithm** — [*Evolving Neural Networks through Augmenting Topologies*](http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf), Stanley & Miikkulainen (2002)
